@@ -1,0 +1,8 @@
+<h2>Top Tables</h2>
+<div class="tables-menu">
+    <a *ngFor="let table of tables" routerLink="/detail/{{table.id}}">
+        {{table.name}}
+    </a>
+</div>
+
+<app-table-search></app-table-search>

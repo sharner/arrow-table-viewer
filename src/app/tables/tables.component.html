@@ -1,0 +1,20 @@
+<h2>My Tables</h2>
+
+<div>
+    <label for="new-table">Table name: </label>
+    <input id="new-table" #tableName />
+
+    <!-- (click) passes input value to add() and then clears the input -->
+    <button type="button" class="add-button" (click)="add(tableName.value); tableName.value=''">
+        Add table
+    </button>
+</div>
+
+<ul class="arrow-tables">
+    <li *ngFor="let table of arrowTables">
+        <a routerLink="/detail/{{table.id}}">
+            <span class="badge">{{table.id}}</span> {{table.name}}
+        </a>
+        <button type="button" class="delete" title="delete table" (click)="delete(table)">x</button>
+    </li>
+</ul>

@@ -1,0 +1,10 @@
+<div *ngIf="table">
+
+    <h2>{{table.name | uppercase}} Details</h2>
+    <div><span>id: </span>{{table.id}}</div>
+    <div>
+        <label for="table-name">Table name: </label>
+        <input id="table-name" [(ngModel)]="table.name" placeholder="name">
+    </div>
+    <button type="button" (click)="save()">save</button>
+</div>

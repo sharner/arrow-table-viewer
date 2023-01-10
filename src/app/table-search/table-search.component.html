@@ -1,0 +1,12 @@
+<div id="search-component">
+    <label for="search-box">Table Search</label>
+    <input #searchBox id="search-box" (input)="search(searchBox.value)" />
+  
+    <ul class="search-result">
+      <li *ngFor="let table of tables$ | async" >
+        <a routerLink="/detail/{{table.id}}">
+          {{table.name}}
+        </a>
+      </li>
+    </ul>
+  </div>
