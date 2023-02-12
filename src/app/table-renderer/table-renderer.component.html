@@ -1,0 +1,14 @@
+<h3>Schema</h3>
+<table class="arrow-table-header">
+    <tr *ngFor="let field of tableContent?.schema?.fields">
+        <th>{{field.name}}</th>
+        <th>{{field.type}}</th>
+    </tr>
+</table>
+
+<h3>Rows</h3>
+<table class="arrow-table-rows">
+    <tr *ngFor="let row of getTableRows()">
+        <th *ngFor="let cell of row">{{cell}}</th>
+    </tr>
+</table>

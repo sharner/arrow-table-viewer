@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './in-memory-data.service';
 import { TableSearchComponent } from './table-search/table-search.component';
+import { TableRendererComponent } from './table-renderer/table-renderer.component';
 
 @NgModule({
   declarations: [
@@ -19,19 +20,21 @@ import { TableSearchComponent } from './table-search/table-search.component';
     TableDetailComponent,
     MessagesComponent,
     DashboardComponent,
-    TableSearchComponent
+    TableSearchComponent,
+    TableRendererComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    // TODO: Disabling this since it intefers with fetching static content
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, { dataEncapsulation: false }
-    )
+    // HttpClientInMemoryWebApiModule.forRoot(
+    //   InMemoryDataService, { dataEncapsulation: false }
+    // )
   ],
   providers: [],
   bootstrap: [AppComponent]

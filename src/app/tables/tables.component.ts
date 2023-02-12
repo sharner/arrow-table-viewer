@@ -14,13 +14,19 @@ export class TablesComponent implements OnInit {
 
   constructor(private arrowTableService: ArrowTableService, private messageService: MessageService) { }
 
+  // When using API
   getArrowTables(): void {
     this.arrowTableService.getArrowTables()
       .subscribe(tables => this.arrowTables = tables);
   }
 
+  getArrowTablesMock(): void {
+    this.arrowTables = this.arrowTableService.getArrowTablesMock();
+  }
+
   ngOnInit(): void {
-    this.getArrowTables();
+    // this.getArrowTables();
+    this.getArrowTablesMock();
   }
 
   add(name: string): void {

@@ -1,9 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { ArrowTable } from '../arrow_table';
 import { ArrowTableService } from '../arrow-table.service';
-import { Table } from 'apache-arrow';
+import { tableFromIPC, Table } from "apache-arrow";
+import { HelloWorldService } from '../arrow-action.service';
 
 @Component({
   selector: 'app-table-detail',
@@ -13,30 +14,36 @@ import { Table } from 'apache-arrow';
 export class TableDetailComponent {
 
   @Input() table?: ArrowTable;
-  @Input() tableContent?: Uint8Array;
+  @Input() hello?: string;
 
   constructor(
     private route: ActivatedRoute,
     private tableService: ArrowTableService,
-    private location: Location
+    private location: Location,
+    private helloService: HelloWorldService
   ) {}
 
   ngOnInit(): void {
     this.getTable();
-    // his.getTableContents();
+    this.getHeathCheck();
   }
 
   getTable(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.tableService.getArrowTable(id)
-      .subscribe(table => this.table = table);
-      this.tableService.testStaticContent();
+    // this.tableService.getArrowTable(id)
+    //   .subscribe(table => this.table = table);
+    this.table = this.tableService.getArrowTableMock(id);
   }
 
-  getTableContents(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.tableService.getArrowTableContents("foobar")
-      .subscribe(tableContent => this.tableContent = tableContent);
+  getHeathCheck(): void {
+    //this.helloService.hello();
+    this.helloService.doAction()
+      .subscribe((h) => {
+        if (h !== "done") {
+          console.log("Appending to hello "+h);
+          this.hello = h;
+        }
+      });
   }
 
   goBack(): void {

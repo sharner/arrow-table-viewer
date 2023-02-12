@@ -4,8 +4,9 @@ import { ArrowTable } from './arrow_table';
 import { ARROW_TABLES } from './mock-tables';
 import { MessageService } from './message.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, first, tap } from 'rxjs/operators';
-import { tableFromIPC, Table } from "apache-arrow";
+import { FlightServiceClient } from '../../proto/generated/proto/Flight_pb_service';
+import { Result, Action } from '../../proto/generated/proto/Flight_pb';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ import { tableFromIPC, Table } from "apache-arrow";
 export class ArrowTableService {
 
   private arrowTablesUrl = 'api/tables';
+  private client: FlightServiceClient;
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -21,12 +23,34 @@ export class ArrowTableService {
   constructor(
     private http: HttpClient, 
     private messageService: MessageService
-  ) { }
+  ) { 
+    this.client = new FlightServiceClient(
+      'http://localhost:8080');
+  }
 
   private log(message: string) {
     this.messageService.add(`Arrow Table Service: ${message}`);
   }
 
+  getArrowTablesMock(): ArrowTable[] {
+    return ARROW_TABLES;
+  }
+
+  getArrowTableMock(id: number): ArrowTable | undefined {
+    for (let table of ARROW_TABLES) {
+      if (table.id === id) {
+        return table;
+      }
+    }
+    return undefined;
+  }
+
+  getArrowTableLocation(id: number): string | undefined {
+    const table = this.getArrowTableMock(id);
+    return table?.loc;
+  }
+
+  // When using API
   getArrowTables(): Observable<ArrowTable[]> {
     return this.http.get<ArrowTable[]>(this.arrowTablesUrl)
     .pipe(
@@ -43,17 +67,13 @@ export class ArrowTableService {
     );
   }
 
-  getArrowTableContents(loc: string): Observable<Uint8Array> {
-    const url = `/ipc/chord-progressions.arrow`;
-    return this.http.get<Uint8Array>(url).pipe(
+  getArrowTableContents(loc: string): Observable<any> {
+    const url = `/assets/${loc}`;
+    //const options = {observe: 'body', responseType: 'blog'};
+    return this.http.get(url, {observe: 'body', responseType: 'arraybuffer'}).pipe(
       tap(_ => this.log(`fetched arrow table contents`)),
-      catchError(this.handleError<Uint8Array>(`getArrowTableContents loc=${loc}`))
+      catchError(this.handleError<any>(`getArrowTableContents loc=${loc}`))
     );
-  }
-
-  testStaticContent() {
-    const url = `hello.txt`;
-    this.http.get(url).subscribe(console.log);
   }
 
   /**
@@ -87,6 +107,15 @@ export class ArrowTableService {
 
   /** POST: add a new table to the server */
   addArrowTable(table: ArrowTable): Observable<ArrowTable> {
+    
+
+    return this.http.post<ArrowTable>(this.arrowTablesUrl, table, this.httpOptions).pipe(
+      tap((newTable: ArrowTable) => this.log(`added table w/ id=${newTable.id}`)),
+      catchError(this.handleError<ArrowTable>('addArrowTable'))
+    );
+  }
+
+  addArrowTable2(table: ArrowTable): Observable<ArrowTable> {
     return this.http.post<ArrowTable>(this.arrowTablesUrl, table, this.httpOptions).pipe(
       tap((newTable: ArrowTable) => this.log(`added table w/ id=${newTable.id}`)),
       catchError(this.handleError<ArrowTable>('addArrowTable'))

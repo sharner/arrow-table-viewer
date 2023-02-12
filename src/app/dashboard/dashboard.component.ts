@@ -13,11 +13,20 @@ export class DashboardComponent implements OnInit {
   constructor(private tableService: ArrowTableService) { }
 
   ngOnInit(): void {
-    this.getTables();
+    //this.getArrowTables();
+    this.getArrowTablesMock();
   }
 
-  getTables(): void {
+  // When using API
+  getArrowTables(): void {
     this.tableService.getArrowTables()
       .subscribe(tables => this.tables = tables.slice(1, 5));
   }
+
+
+  getArrowTablesMock(): void {
+    let tables = this.tableService.getArrowTablesMock();
+    this.tables = tables.slice(1, 5);
+  }
+
 }
